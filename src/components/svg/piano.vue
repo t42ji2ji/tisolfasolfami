@@ -1,5 +1,5 @@
 <template lang="pug">
-  .box
+  .box {{text.message}}
     svg(width='658px' height='182px' viewbox='0 0 658 182' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink')
       // Generator: Sketch 61.2 (89653) - https://sketch.com
       title piano
@@ -37,30 +37,105 @@
 
 <script>
 import Tone from "tone";
+import * as dat from "dat.gui";
 
 export default {
   name: "piano",
   data() {
     return {
       keyController: "",
+      text: {
+        message: 0,
+      },
     };
   },
   mounted() {
-    this.keyController = new Tone.Synth().toMaster();
+    this.keyController = new Tone.Synth({
+      oscillator: {
+        type: "fmsquare",
+        modulationFrequency: 0.2,
+      },
+      envelope: {
+        attack: this.text.message,
+        decay: this.text.message,
+        sustain: 0.2,
+        release: 0.9,
+      },
+    }).toMaster();
     this.register_key();
+    var gui = new dat.GUI();
+    gui.add(this.text, "message");
   },
   methods: {
     register_key() {
       var vm = this;
       let keys = document.querySelectorAll("rect");
       keys.forEach((value) => {
-        value.addEventListener("click", (t) => {
+        value.addEventListener("mousedown", (t) => {
           console.log(vm.pianoConvert(t.target.id));
-          vm.keyController.triggerAttackRelease(
-            vm.pianoConvert(t.target.id),
-            "8n"
-          );
+          vm.keyController.triggerAttack(vm.pianoConvert(t.target.id));
         });
+        value.addEventListener("mouseup", (t) => {
+          console.log(vm.pianoConvert(t.target.id));
+          vm.keyController.triggerRelease();
+        });
+      });
+
+      document.addEventListener("keyup", (e) => {
+        let key = e.key.toUpperCase();
+        if (key === "A") {
+          vm.keyController.triggerRelease();
+        } else if (key === "S") {
+          vm.keyController.triggerRelease();
+        } else if (key === "D") {
+          vm.keyController.triggerRelease();
+        } else if (key === "F") {
+          vm.keyController.triggerRelease();
+        } else if (key === "G") {
+          vm.keyController.triggerRelease();
+        } else if (key === "H") {
+          vm.keyController.triggerRelease();
+        } else if (key === "J") {
+          vm.keyController.triggerRelease();
+        } else if (key === "K") {
+          vm.keyController.triggerRelease();
+        } else if (key === "L") {
+          vm.keyController.triggerRelease();
+        } else if (key === ":") {
+          vm.keyController.triggerRelease();
+        } else if (key === '"') {
+          vm.keyController.triggerRelease();
+        } else if (key === "S") {
+          vm.keyController.triggerRelease();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        let key = e.key.toUpperCase();
+        if (key === "A") {
+          vm.keyController.triggerAttack(vm.pianoConvert("1"));
+        } else if (key === "S") {
+          vm.keyController.triggerAttack(vm.pianoConvert("2"));
+        } else if (key === "D") {
+          vm.keyController.triggerAttack(vm.pianoConvert("3"));
+        } else if (key === "F") {
+          vm.keyController.triggerAttack(vm.pianoConvert("4"));
+        } else if (key === "G") {
+          vm.keyController.triggerAttack(vm.pianoConvert("5"));
+        } else if (key === "H") {
+          vm.keyController.triggerAttack(vm.pianoConvert("6"));
+        } else if (key === "J") {
+          vm.keyController.triggerAttack(vm.pianoConvert("7"));
+        } else if (key === "K") {
+          vm.keyController.triggerAttack(vm.pianoConvert("8"));
+        } else if (key === "L") {
+          vm.keyController.triggerAttack(vm.pianoConvert("9"));
+        } else if (key === ":") {
+          vm.keyController.triggerAttack(vm.pianoConvert("10"));
+        } else if (key === '"') {
+          vm.keyController.triggerAttack(vm.pianoConvert("11"));
+        } else if (key === "S") {
+          vm.keyController.triggerAttack(vm.pianoConvert("12"));
+        }
       });
     },
     pianoConvert(t) {
@@ -78,7 +153,6 @@ export default {
         66 + parseInt(temp[0] % 7 == 0 ? 7 : temp[0] % 7)
       );
       if (mark == "H") {
-        console.log("object");
         mark = "A";
       } else if (mark == "I") {
         mark = "B";
